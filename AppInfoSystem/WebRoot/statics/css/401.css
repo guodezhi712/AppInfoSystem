@@ -1,0 +1,63 @@
+
+h2,h1{
+	 animation: ardos 5s linear infinite;
+}
+a{
+	 animation: ardoss 5s linear infinite;
+}
+@keyframes ardos{
+    0%{
+       color:#000;
+    }
+    25%{
+    	color:red;
+    }
+   50%{
+    	color:blueviolet;
+    }
+    75%{
+    	color:deeppink;
+    }
+    100%{
+    	color:apua;
+    }
+}
+
+@keyframes ardoss{
+    0%{
+       color:apua;
+    }
+    25%{
+    	color:deeppink;
+    }
+   50%{
+    	color:blueviolet;
+    }
+    75%{
+    	color:red;
+    }
+    100%{
+    	color:#000;
+    }
+}
+.music{
+    animation: ardo 5s linear infinite;
+}
+
+@keyframes ardo{
+    0%{
+        transform: rotate(0deg) scale(1);
+    }
+   25%{
+    	transform: rotate(180deg) scale(0.5);
+    }
+    50%{
+    	transform:rotate(360deg) scale(0.25);
+    }
+     75%{
+    	transform:rotate(540deg) scale(0.5);
+    }
+    100%{
+    	transform:rotate(720deg) scale(1);
+    }
+}

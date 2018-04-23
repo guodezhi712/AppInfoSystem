@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.appsys.dao.devUserMapper.loginMapper">
+	<!-- 开发者验证方法01 -->
+	<select id="selectdevlogin" resultType="devUser">
+		select * from dev_user where devCode=#{devCode}
+	</select>
+	<!-- 开发者注册方法02 -->
+	<insert id="insertregister" parameterType="devUser">
+		insert dev_user(devCode,devName,devPassword,devEmail,devInfo,createdBy,creationDate)
+			values(#{devCode},#{devName},#{devPassword},#{devEmail},#{devInfo},#{createdBy},
+				#{creationDate})
+	</insert>
+	<!-- 查询开发者的总人数03 -->
+	<select id="selectAppInfoCount" resultType="int">
+		select count(*) as count from dev_user
+		<where>
+			<if test="devName!=null and devName!='' ">
+				devName like concat('%',#{devName},'%')
+			</if>
+		</where>
+	</select>
+	<!-- 查询所有开发者信息04 -->
+	<select id="selectAppInfoList" resultType="devUser">
+		select * from dev_user
+		<where>
+			<if test="devName!=null and devName!='' ">
+				devName like concat('%',#{devName},'%')
+			</if>
+		</where>
+		order by creationDate DESC limit #{currentPageNo},#{pageSize}
+	</select>
+	<!-- 删除开发者信息05 -->
+	<delete id="appsysdeldevuser">
+		delete from dev_user where id=#{parseInt}
+	</delete>
+	<!-- 查询对应的开发者信息06 -->
+	<select id="selectApp" resultMap="s">
+		select id,devCode,devPassword,devName,devEmail,devInfo,createdBy,creationDate,modifyBy,modifyDate
+		  from dev_user where id=#{id}
+	</select>
+	<resultMap type="devUser" id="s">
+		<id property="id" column="id"/>
+		<result property="devCode" column="devCode"/>
+		<result property="devPassword" column="devPassword"/>
+		<result property="devName" column="devName"/>
+		<result property="devEmail" column="devEmail"/>
+		<result property="devInfo" column="devInfo"/>
+		<result property="createdBy" column="createdBy"/>
+		<result property="creationDate" column="creationDate"/>
+		<result property="modifyBy" column="modifyBy"/>
+		<result property="modifyDate" column="modifyDate"/>
+	</resultMap>
+	<!-- 保存修改apk开发者账户的信息07 -->
+	<update id="updatedevUser">
+		update dev_user
+		<set>
+			<if test="devName!=null and devName!=''">
+				devName=#{devName},
+			</if>
+			<if test="devCode!=null and devCode!=''">
+				devCode=#{devCode},
+			</if>
+			<if test="devPassword!=null and devPassword!=''">
+				devPassword=#{devPassword},
+			</if>
+			<if test="devEmail!=null and devEmail!=''">
+				devEmail=#{devEmail},
+			</if>
+			<if test="devInfo!=null and devInfo!=''">
+				devInfo=#{devInfo},
+			</if>
+			<if test="createdBy!=null and createdBy!=''">
+				createdBy=#{createdBy},
+			</if>
+			<if test="creationDate!=null and creationDate!=''">
+				creationDate=#{creationDate},
+			</if>
+			<if test="modifyBy!=null and modifyBy!=''">
+				modifyBy=#{modifyBy},
+			</if>
+			<if test="modifyDate!=null and modifyDate!=''">
+				modifyDate=#{modifyDate},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>

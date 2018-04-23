@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.appsys.dao.backendUserMapper.backendUserMappers">
+	<!--后台验证方法01 -->
+	<select id="selectdevlogin" resultMap="user">
+		select backend_user.*,data_dictionary.valueName as 'valueName' from backend_user,data_dictionary where userCode=#{devCode}
+		and data_dictionary.id=backend_user.userType
+	</select>
+	<resultMap type="backendUser" id="user">
+		<id property="id" column="id"/>
+		<result property="userCode" column="userCode"/>
+		<result property="userName" column="userName"/>
+		<result property="userType" column="userType"/>
+		<result property="createdBy" column="createdBy"/>
+		<result property="creationDate" column="creationDate"/>
+		<result property="modifyBy" column="modifyBy"/>
+		<result property="modifyDate" column="modifyDate"/>
+		<result property="userPassword" column="userPassword"/>
+		<result property="valueName" column="valueName"/>
+	</resultMap>
+	<!-- 获取所属平台或者app状态02 -->
+	<select id="selectDataDictionaryList" resultType="dataDictionary">
+		select * from data_dictionary
+		<where>
+			<if test="typeCode!=null and typeCode!='' ">
+				typeCode=#{typeCode}
+			</if>
+		</where>
+	</select>
+	<!--后台用户唯一性验证03 -->
+	<select id="selectcodeid" resultType="backendUser">
+		select * from backend_user where userCode=#{code}
+	</select>
+	<!--新增后台用户04 -->
+	<insert id="add" parameterType="backendUser">
+		insert backend_user(userCode,userName,userType,createdBy
+		,creationDate,userPassword)
+		values(
+		#{userCode},#{userName},#{userType},#{createdBy},#{creationDate},#{userPassword}
+		)
+	</insert>
+	<!--获取后台账号信息总记录数05-->
+	<select id="selectUserCountList" resultType="int">
+		select count(*) as count from backend_user a
+			<where>
+				<if test="userCode != null and userCode!=''">
+					and a.userCode = #{userCode}
+				</if>
+				<if test="userType != null and userType!=0">
+					and a.userType = #{userType}
+				</if>
+			</where>
+	</select>
+	<!--获取后台账号信息06-->
+	<select id="selectAppInfoList" resultType="backendUser">
+		select a.id,a.userCode,a.userName,a.userType,a.createdBy
+		,a.creationDate,a.modifyBy,a.modifyDate,a.userPassword
+		,(select valueName from data_dictionary d where  a.userType=d.valueId AND d.typeCode='USER_TYPE') as valueName
+		from  backend_user a
+		<where>
+			<if test="id!=null and id!='' ">
+				and id=#{id}
+			</if>
+			<if test="userCode!=null and userCode!='' ">
+				and userCode like concat('%',#{userCode},'%')
+			</if>
+			<if test="userType!=null and userType!='' ">
+				and userType=#{userType}
+			</if>
+		</where>
+	</select>
+	<!-- 根据id查询账号信息07 -->
+	<select id="selectApp" resultType="backendUser">
+		select a.id,a.userCode,a.userName,a.userType,a.createdBy
+		,a.creationDate,a.modifyBy,a.modifyDate,a.userPassword
+		,(select valueName from data_dictionary d where  a.userType=d.valueId AND d.typeCode='USER_TYPE') as valueName
+		from  backend_user a where id=#{parseInt}
+	</select>
+	<!--根据id删除账号08 -->
+	<delete id="appsysdeleteAppById">
+		delete from backend_user where id=${parseInt}
+	</delete>
+	
+	<update id="updateuser" parameterType="backendUser">
+		update backend_user
+		<set>
+			<if test="userCode!=null and userCode!='' ">
+				userCode=#{userCode},
+			</if>
+			<if test="userName!=null and userName!='' ">
+				userName=#{userName},
+			</if>
+			<if test="userType!=null and userType!='' ">
+				userType=#{userType},
+			</if>
+			<if test="modifyBy!=null and modifyBy!='' ">
+				modifyBy=#{modifyBy},
+			</if>
+			<if test="modifyDate!=null and modifyDate!='' ">
+				modifyDate=#{modifyDate},
+			</if>
+			<if test="userPassword!=null and userPassword!='' ">
+				userPassword=#{userPassword},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>

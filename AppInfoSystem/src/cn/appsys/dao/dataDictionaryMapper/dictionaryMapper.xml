@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.appsys.dao.dataDictionaryMapper.dictionaryMapper">
+	<!--  显示所有字典类型01 -->
+	<select id="dataDictionaryList" resultType="dataDictionary">
+			SELECT DISTINCT * FROM data_dictionary
+			<where>
+				<if test="typeCode!=null and typeCode!='' ">
+					typeCode like concat('%',#{typeCode},'%')
+				</if>
+			</where>
+			 limit #{currentPageNo},#{pageSize}
+	</select>
+	<!-- 查询所有字典类型的总记录数02  -->
+	<select id="selectAppInfoCount" resultType="int">
+			SELECT count(*) FROM data_dictionary
+			<where>
+				<if test="typeCode!=null and typeCode!='' ">
+					typeCode like concat('%',#{typeCode},'%')
+				</if>
+			</where>
+	</select>
+	<!--  根据id查询对应的字典类型03  -->
+	<select id="selectOne" resultType="dataDictionary">
+		select * from data_dictionary where id=#{id}
+	</select>
+	<!-- 判断要删除的类型是否被使用04 -->
+	<select id="selectid" resultType="int">
+		SELECT COUNT(*) FROM data_dictionary,backend_user,app_info,app_version
+			WHERE ((backend_user.userType=data_dictionary.id AND data_dictionary.typeCode='USER_TYPE') OR
+			(app_info.status=data_dictionary.valueId AND data_dictionary.typeCode='APP_STATUS') OR
+			(app_info.flatformId=data_dictionary.valueId AND data_dictionary.typeCode='APP_FLATFORM') OR
+			(app_version.publishStatus=data_dictionary.valueId  AND data_dictionary.typeCode='PUBLISH_STATUS') )
+			AND data_dictionary.id=#{parseInt}
+	</select>
+	<delete id="appsysdeldevuser">
+		delete from data_dictionary where id=#{parseInt}
+	</delete>
+	<!-- 保存修改字典类型05 -->
+	<update id="updateDictionary" parameterType="dataDictionary">
+		update data_dictionary
+		<set>
+			<if test="valueName!=null and valueName!='' ">
+				valueName=#{valueName},
+			</if>
+			<if test="modifyDate!=null and modifyDate!='' ">
+				modifyDate=#{modifyDate},
+			</if>
+			<if test="modifyBy!=null and modifyBy!='' ">
+				modifyBy=#{modifyBy},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<!-- 验证要新增的字典类型是否已经存在06 -->
+	<select id="selectOnes" resultType="int">
+		select count(*) from data_dictionary
+		<where>
+			<if test="tCode!=null and tCode!='' ">
+				and typeCode=#{tCode}
+			</if>
+			<if test="tName!=null and tName!='' ">
+				and typeName=#{tName}
+			</if>
+			<if test="vId!=null and vId!='' ">
+				and valueId=#{vId}
+			</if>
+			<if test="vName!=null and vName!='' ">
+				and valueName=#{vName}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insertDictionary" parameterType="dataDictionary">
+		insert data_dictionary (typeCode,typeName,valueId,valueName,createdBy,creationDate)
+		values(#{typeCode},#{typeName},#{valueId},#{valueName},#{createdBy},
+				#{creationDate})
+	</insert>
+</mapper>
